@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brew Metrics - Feedback</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <style>
+        /* Add specific styles if needed */
+        #brewers-notes-display {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+         #brewers-notes-display h4 {
+             margin-top: 0;
+             margin-bottom: 10px;
+             color: #4a6fa5;
+         }
+         #brewers-notes-display p {
+             margin-bottom: 0;
+             line-height: 1.5;
+         }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Submit Feedback</h1>
+            <h2 id="batch-name-display">Loading batch info...</h2>
+        </header>
+
+        <main id="feedback-form-container">
+
+            <!-- === ADDED CONTAINER FOR BREWER'S NOTES === -->
+            <section id="brewers-notes-display" style="display: none;">
+                <!-- Notes will be loaded here by feedback-form.js -->
+            </section>
+            <!-- === END BREWER'S NOTES CONTAINER === -->
+
+
+            <form id="feedback-form">
+                <div class="form-group">
+                     <label for="overall-rating">Overall Rating: <span id="overall-rating-value" class="rating-value">3</span></label>
+                     <input type="range" id="overall-rating" name="overall-rating" min="1" max="5" value="3" required>
+                     <!-- Need to verify this overall-rating input exists -->
+                </div>
+
+                <hr>
+
+                <h3>Detailed Ratings (1=Low, 5=High)</h3>
+                <!-- Dynamic section for flavor sliders -->
+                <div id="dynamic-flavor-section">
+                    <p>Loading flavor options...</p>
+                </div>
+
+                <hr>
+
+                <div class="form-group">
+                    <label for="comments">Comments (Optional):</label>
+                    <textarea id="comments" name="comments" rows="4"></textarea>
+                </div>
+
+                <button type="button" id="submit-feedback">Submit Feedback</button>
+                <div id="error-message" class="error-message" style="display:none; margin-top: 15px;"></div>
+            </form>
+        </main>
+
+        <div id="thank-you-message" style="display: none; padding: 20px; text-align: center; background-color: #e9f5e9; border: 1px solid #5cb85c; border-radius: 5px;">
+            <h2>Thank You!</h2>
+            <p>Your feedback has been submitted.</p>
+            <!-- Incentive text will be added here by JS if available -->
+            <p id="incentive-text" style="margin-top: 15px; font-weight: bold;"></p>
+        </div>
+
+        <footer>
+            <p>Powered by Brew Metrics</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="../assets/js/firebase-config.js"></script>
+    <script type="module" src="../assets/js/flavor-data.js"></script>
+    <script type="module" src="../assets/js/feedback-form.js"></script>
+</body>
+</html>

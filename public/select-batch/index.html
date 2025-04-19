@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brew Metrics - Select Your Beer</title>
+    <!-- Correct path assuming select-batch is inside public -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <style>
+        /* Add some basic specific styles */
+        .batch-list .batch-item {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .batch-list .batch-item:hover {
+            background-color: #f9f9f9;
+        }
+        .batch-list .batch-details span {
+            margin-right: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .batch-list h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+        .loading, .error { /* Center loading/error messages */
+             text-align: center;
+             padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <!-- Simplified Header -->
+            <h1>Select Your Beer</h1>
+            <p>Tap on the beer you'd like to provide feedback for.</p>
+        </header>
+
+        <main>
+            <div id="loading-indicator" class="loading">Loading active beers...</div>
+            <div id="error-message" class="error" style="display: none;"></div>
+            <!-- Container for the dynamic list -->
+            <div id="active-batches-list" class="batch-list"></div>
+            <div id="no-batches-message" style="display: none; text-align: center; padding: 20px;">
+                <p>No active beers are currently available for feedback from this brewery.</p>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by Brew Metrics</p>
+        </footer>
+    </div>
+
+    <!-- Load YOUR firebase-config first (which should export db) -->
+    <!-- IMPORTANT: Use type="module" -->
+    <script type="module" src="../assets/js/firebase-config.js"></script>
+    <!-- Load the specific logic for this page -->
+    <script type="module" src="../assets/js/select-batch.js"></script>
+</body>
+</html>

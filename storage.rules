@@ -1,0 +1,22 @@
+// firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Breweries can manage their own docs
+    match /breweries/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    // Breweries can manage their own batches
+    match /batches/{batchId} {
+      allow read: if true; // Public read for feedback form
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.breweryId;
+      allow update, delete: if request.auth != null && get(/databases/$(database)/documents/batches/$(batchId)).data.breweryId == request.auth.uid;
+    }
+    // Allow anyone to submit feedback (for now)
+    match /feedback/{feedbackId} {
+       allow read: if request.auth != null && get(/databases/$(database)/documents/breweries/$(request.auth.uid)).exists; // Breweries can read feedback for their batches
+       allow create: if true; // Public write
+       // No update/delete for public
+    }
+  }
+}

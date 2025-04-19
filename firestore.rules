@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Allow breweries to manage their own profile document (Assuming you might add this later)
+    // If you don't have a separate /breweries collection for profiles yet, you can comment this out.
+    match /breweries/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Rules for the 'batches' collection
+    match /batches/{batchId} {
+      // Allow anyone to read batch info (needed for public feedback form to get batch name, notes etc.)
+      allow read: if true;
+
+      // Allow authenticated users (brewers) to create a batch IF the breweryId in the
+      // document being created matches their own UID.
+      // Use request.resource.data for create/update rules to check incoming data.
+      allow create: if request.auth != null && request.resource.data.breweryId == request.auth.uid;
+
+      // Allow updates/deletes only by the brewery owner associated with that batch.
+      // Use resource.data for update/delete rules to check existing data.
+      allow update, delete: if request.auth != null && resource.data.breweryId == request.auth.uid;
+    }
+
+    // Rules for the 'feedback' collection
+    match /feedback/{feedbackId} {
+      // Allow anyone to create (submit) feedback.
+      // You might add validation later (e.g., ensure required fields exist using request.resource.data)
+      allow create: if true;
+
+      // Allow only the relevant brewery owner to read feedback for their batches.
+      // This rule relies on the breweryId field being present and correct in the feedback document.
+      allow read: if request.auth != null && resource.data.breweryId == request.auth.uid;
+
+      // Deny public updates or deletes.
+      allow update, delete: if false;
+    }
+
+    // Rule for the test collection (Keep if still used for testing writes)
+    match /test_collection/{testDocId} {
+      // Allow any authenticated user to create documents here for testing purposes.
+      allow create: if request.auth != null;
+      // Add read/update/delete if needed for specific testing scenarios.
+    }
+  }
+}
