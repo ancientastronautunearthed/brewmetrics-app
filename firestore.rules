@@ -1,47 +1,38 @@
+// WARNING: CONTAINS TEMPORARY INSECURE RULE FOR EMULATOR TESTING ONLY
+// MUST BE REVERTED AND REPLACED WITH SECURE CLOUD FUNCTION APPROACH BEFORE DEPLOYMENT
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Allow breweries to manage their own profile document (Assuming you might add this later)
-    // If you don't have a separate /breweries collection for profiles yet, you can comment this out.
+    // Rule for brewery-specific data (e.g., user profiles - assuming this exists)
+    // Keep this rule as it was - secure for brewer's own data
     match /breweries/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Rules for the 'batches' collection
+    // Rule for batches
+    // Keep these rules as they were
     match /batches/{batchId} {
-      // Allow anyone to read batch info (needed for public feedback form to get batch name, notes etc.)
-      allow read: if true;
-
-      // Allow authenticated users (brewers) to create a batch IF the breweryId in the
-      // document being created matches their own UID.
-      // Use request.resource.data for create/update rules to check incoming data.
-      allow create: if request.auth != null && request.resource.data.breweryId == request.auth.uid;
-
-      // Allow updates/deletes only by the brewery owner associated with that batch.
-      // Use resource.data for update/delete rules to check existing data.
-      allow update, delete: if request.auth != null && resource.data.breweryId == request.auth.uid;
+      allow read: if true; // Anyone can read batch details
+      allow create: if request.auth != null && request.resource.data.breweryId == request.auth.uid; // Brewer can create
+      allow update, delete: if request.auth != null && resource.data.breweryId == request.auth.uid; // Brewer can update/delete OWN batches (using existing resource data)
     }
 
-    // Rules for the 'feedback' collection
+    // Rule for feedback
     match /feedback/{feedbackId} {
-      // Allow anyone to create (submit) feedback.
-      // You might add validation later (e.g., ensure required fields exist using request.resource.data)
-      allow create: if true;
+      allow create: if true; // Anyone can submit feedback
 
-      // Allow only the relevant brewery owner to read feedback for their batches.
-      // This rule relies on the breweryId field being present and correct in the feedback document.
-      allow read: if request.auth != null && resource.data.breweryId == request.auth.uid;
+      // --- THIS IS THE MODIFIED LINE ---
+      // TEMPORARY INSECURE RULE FOR EMULATOR TESTING: Allows any read operation.
+      allow read: if true;
+      // --- END OF MODIFIED LINE ---
 
-      // Deny public updates or deletes.
+      // Prevent updates or deletes by client-side code
       allow update, delete: if false;
     }
 
-    // Rule for the test collection (Keep if still used for testing writes)
-    match /test_collection/{testDocId} {
-      // Allow any authenticated user to create documents here for testing purposes.
-      allow create: if request.auth != null;
-      // Add read/update/delete if needed for specific testing scenarios.
-    }
+    // Add any other collection rules here...
+
   }
 }
