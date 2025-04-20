@@ -1,4 +1,12 @@
-/* public/assets/css/styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Bitter&family=Montserrat&display=swap');
+
+:root {
+    --amber: #FFC107;  /* Primary action color */
+    --stout: #1C1C1C;  /* Text and headings */
+    --foam: #F5F5F5;   /* Backgrounds */
+    --copper: #B87333; /* Accents and borders */
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,10 +14,10 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f4f4f4;
+    color: var(--stout);
+    background-color: var(--foam);
 }
 
 .container {
@@ -25,16 +33,27 @@ header {
     margin-bottom: 20px;
 }
 
-h1, h2 {
+h1, h2, h3 {
+    font-family: 'Bitter', serif;
+    color: var(--stout);
     margin-bottom: 20px;
-    color: #333;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
 }
 
 .form-container {
-    background: #fff;
+    background: var(--foam);
     padding: 20px;
+    border: 2px solid var(--copper);
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
@@ -52,21 +71,28 @@ input[type="email"],
 input[type="password"] {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 2px solid var(--copper);
     border-radius: 5px;
+    background-color: var(--foam);
 }
 
 button {
     padding: 10px 15px;
-    background-color: #4CAF50;
+    background-color: var(--amber);
     border: none;
-    color: white;
+    color: var(--stout);
     cursor: pointer;
     border-radius: 5px;
+    font-family: 'Montserrat', sans-serif;
+    transition: background-color 0.2s ease, transform 0.1s linear;
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #e6ac00; /* Darker Amber */
+}
+
+button:active {
+    transform: scale(0.95); /* Retro-style click effect */
 }
 
 .button-group {
@@ -80,15 +106,15 @@ button:hover {
 }
 
 .create-batch, .batches {
-    background: #fff;
+    background: var(--foam);
     padding: 20px;
+    border: 2px solid var(--copper);
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
 }
 
 .batch-item {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 2px solid var(--copper);
     padding: 15px 0;
 }
 
@@ -101,41 +127,61 @@ button:hover {
 }
 
 .feedback-container {
-    background: #fff;
+    background: var(--foam);
     padding: 20px;
+    border: 2px solid var(--copper);
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
 }
-/* Style the container for the anchor labels */
+
 .slider-anchor-labels {
     display: flex;
-    justify-content: space-between; /* Evenly space the labels */
-    margin-top: 4px; /* Add a small space below the slider */
-    padding: 0 5px; /* Add slight padding so ends align better with slider */
-    box-sizing: border-box; /* Include padding in width calculation */
-    width: 100%; /* Make container same width as slider parent block usually */
+    justify-content: space-between;
+    margin-top: 4px;
+    padding: 0 5px;
+    box-sizing: border-box;
+    width: 100%;
 }
 
-/* Style individual labels */
 .slider-anchor-labels span {
-    font-size: 0.75em; /* Make labels small */
-    color: #555; /* Adjust color as needed */
+    font-size: 0.75em;
+    color: var(--stout);
     text-align: center;
-    flex-basis: 30%; /* Adjust % based on how many labels (3 labels -> ~30%) */
-    /* Allow wrapping */
+    flex-basis: 30%;
     white-space: normal;
     line-height: 1.2;
-    /* Add max-width if needed, but flex-basis often handles distribution */
 }
 
-/* Ensure the parent block allows space for the labels */
 .descriptor-block {
-    margin-bottom: 15px; /* Add some space below each slider+label block */
+    margin-bottom: 15px;
 }
 
-/* Optional: Make sure sliders take up reasonable width */
 .descriptor-block input[type="range"] {
-     width: 100%; /* Make slider take full width of its container */
-     margin-top: 5px; /* Space between label and slider */
+    width: 100%;
+    margin-top: 5px;
+    -webkit-appearance: none;
+    height: 10px;
+    background: var(--copper);
+    border-radius: 5px;
+}
+
+.descriptor-block input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--amber);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    h1 {
+        font-size: 2rem;
+    }
+    h2 {
+        font-size: 1.5rem;
+    }
 }
