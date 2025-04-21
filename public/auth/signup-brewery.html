@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brewery Signup - BrewMetrics</title>
+    <!-- Link to the main stylesheet -->
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <!-- Add Google Fonts if they aren't already loaded globally by styles.css -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Optional: Add specific styles for this page or add to styles.css -->
+    <style>
+        body {
+             background-color: #eae6e1; /* Match dashboard bg */
+        }
+        .signup-container {
+            max-width: 800px; /* Limit width for readability */
+            margin: 2rem auto;
+            background-color: var(--foam);
+            padding: 2rem 2.5rem;
+            border-radius: var(--radius-medium);
+            border: 2px solid var(--copper);
+            box-shadow: var(--shadow-medium);
+        }
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .signup-header .logo {
+            max-width: 80px;
+            margin-bottom: 1rem;
+        }
+        fieldset {
+            border: 1px solid var(--grey-light);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: var(--radius-small);
+        }
+        legend {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--stout-light);
+            padding: 0 0.5rem;
+        }
+        .form-row { /* Re-use dashboard style */
+             margin-bottom: 0; /* Remove bottom margin from row itself */
+        }
+        .form-row .form-group {
+            margin-bottom: 1.25rem; /* Add margin back to groups inside row */
+        }
+        /* Specific style for logo upload */
+        .logo-upload-area {
+             border: 2px dashed var(--copper-darker);
+             padding: 1rem;
+             text-align: center;
+             cursor: pointer;
+             background-color: #fff;
+             margin-top: 0.5rem;
+             position: relative;
+        }
+        .logo-upload-area:hover {
+            background-color: #fdfaf6;
+        }
+        #logo-preview {
+            max-width: 100px;
+            max-height: 100px;
+            margin-top: 10px;
+            display: none; /* Hidden initially */
+        }
+        #logo-upload {
+             /* Hide the default file input visually but keep it accessible */
+             opacity: 0;
+             position: absolute;
+             width: 100%;
+             height: 100%;
+             left: 0;
+             top: 0;
+             cursor: pointer;
+        }
+        .form-note {
+            font-size: 0.85rem;
+            color: var(--grey-dark);
+            margin-top: -0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .submit-group {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .login-link {
+             display: block;
+             text-align: center;
+             margin-top: 1.5rem;
+             font-size: 0.9rem;
+        }
+        /* Ensure error message styling is present */
+        .error-message { margin-bottom: 1rem; text-align: center;}
+         #loading-indicator { display: none; text-align: center; margin-bottom: 1rem; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container signup-container">
+        <header class="signup-header">
+            <img src="/assets/images/brewmetrics-logo-placeholder.svg" alt="BrewMetrics Logo" class="logo">
+            <h1>Welcome, Brewer!</h1>
+            <p>Let's get your brewery set up on BrewMetrics.</p>
+        </header>
+
+        <!-- Error Message Area -->
+        <div id="error-message" class="error-message" style="display: none;"></div>
+        <!-- Loading Indicator -->
+        <div id="loading-indicator"><p>Creating account...</p></div>
+
+
+        <form id="brewery-signup-form" novalidate> <!-- novalidate prevents default HTML5 validation if JS handles it -->
+
+            <fieldset>
+                <legend>Account Credentials</legend>
+                <div class="form-group">
+                    <label for="signup-email">Login Email:</label>
+                    <input type="email" id="signup-email" name="email" required autocomplete="email">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="signup-password">Password:</label>
+                        <input type="password" id="signup-password" name="password" required autocomplete="new-password" minlength="6">
+                        <p class="form-note" style="margin-top: 5px;">Minimum 6 characters.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password-confirm">Confirm Password:</label>
+                        <input type="password" id="signup-password-confirm" name="passwordConfirm" required autocomplete="new-password">
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Brewery Information</legend>
+                <div class="form-group">
+                    <label for="brewery-name">Brewery Name:</label>
+                    <input type="text" id="brewery-name" name="breweryName" required placeholder="Your Brewery's Official Name">
+                </div>
+
+                <div class="form-group">
+                    <label for="logo-upload">Brewery Logo:</label>
+                     <p class="form-note">Recommended: Square or circular logo (PNG, JPG, SVG), max 2MB.</p>
+                    <div class="logo-upload-area" id="logo-upload-area">
+                         Click or drag here to upload logo
+                        <input type="file" id="logo-upload" name="logoFile" accept="image/png, image/jpeg, image/svg+xml">
+                         <img id="logo-preview" src="#" alt="Logo Preview"/>
+                    </div>
+
+                </div>
+
+                 <div class="form-group">
+                    <label for="brewery-description">Short Public Description (Optional):</label>
+                    <textarea id="brewery-description" name="description" rows="3" maxlength="300" placeholder="A brief intro to your brewery (max 300 chars)."></textarea>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>Location</legend>
+                 <div class="form-group">
+                    <label for="address-street">Street Address:</label>
+                    <input type="text" id="address-street" name="addressStreet" required autocomplete="street-address">
+                </div>
+                 <div class="form-row">
+                     <div class="form-group">
+                        <label for="address-city">City:</label>
+                        <input type="text" id="address-city" name="addressCity" required autocomplete="address-level2">
+                    </div>
+                    <div class="form-group">
+                        <label for="address-state">State / Province:</label>
+                        <input type="text" id="address-state" name="addressState" required autocomplete="address-level1">
+                         <!-- Consider changing to <select> later if needed -->
+                    </div>
+                 </div>
+                 <div class="form-row">
+                     <div class="form-group">
+                        <label for="address-zip">ZIP / Postal Code:</label>
+                        <input type="text" id="address-zip" name="addressZip" required autocomplete="postal-code">
+                    </div>
+                    <div class="form-group">
+                        <label for="address-country">Country:</label>
+                        <input type="text" id="address-country" name="addressCountry" required autocomplete="country-name">
+                         <!-- Consider changing to <select> later if needed -->
+                    </div>
+                 </div>
+            </fieldset>
+
+             <fieldset>
+                <legend>Contact & Online (Optional)</legend>
+                 <div class="form-row">
+                    <div class="form-group">
+                        <label for="public-phone">Public Phone:</label>
+                        <input type="tel" id="public-phone" name="publicPhone" placeholder="(555) 123-4567" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label for="website-url">Website URL:</label>
+                        <input type="url" id="website-url" name="websiteUrl" placeholder="https://yourbrewery.com" autocomplete="url">
+                    </div>
+                </div>
+                <!-- Add social media fields if desired -->
+                 <!--
+                 <div class="form-group">
+                     <label for="social-instagram">Instagram URL:</label>
+                     <input type="url" id="social-instagram" name="socialInstagram" placeholder="https://instagram.com/yourbrewery">
+                 </div>
+                 -->
+            </fieldset>
+
+            <div class="submit-group">
+                <button type="submit" id="submit-signup-btn" class="btn btn-primary">
+                    <span class="btn-content">Create Brewery Account</span>
+                </button>
+            </div>
+        </form>
+
+        <a href="/login.html" class="login-link">Already have an account? Log In</a>
+
+    </div><!-- /signup-container -->
+
+    <!-- Scripts -->
+    <script type="module" src="/assets/js/firebase-config.js"></script>
+    <!-- The NEW JS file for this page's logic -->
+    <script type="module" src="/assets/js/signup-brewery.js"></script>
+</body>
+</html>

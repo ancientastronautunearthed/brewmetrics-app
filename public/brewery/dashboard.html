@@ -3,175 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brew Metrics - Brewery Dashboard</title>
+    <title>BrewMetrics Dashboard - Pouring Insights</title>
+    <!-- Link to your main stylesheet -->
     <link rel="stylesheet" href="/assets/css/styles.css">
-    <style>
-        /* --- Styles from previous version --- */
-        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 1200px; margin: 0 auto; padding: 20px; color: #333; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-        section { margin-bottom: 30px; }
-        .batch-form, .brewery-url-section { background: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], input[type="number"], textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
-        textarea { resize: vertical; }
-        button { background: #4a6fa5; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.2s; }
-        button:hover { background: #3a5a80; }
-        button:disabled { background: #cccccc; cursor: not-allowed; }
-        .logout-btn { background: #f44336; }
-        .logout-btn:hover { background: #d32f2f; }
-        .batches-container { margin-top: 30px; }
-        .batch-item { background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid #4a6fa5; }
-        .batch-inactive { opacity: 0.7; border-left-color: #bbb; }
-        .batch-item h3 { margin-top: 0; color: #4a6fa5; margin-bottom: 10px; }
-        .batch-status { font-size: 0.8em; font-weight: normal; color: #666; }
-        .batch-active .batch-status { color: green; }
-        .batch-inactive .batch-status { color: #888; }
-        .batch-item button { margin-top: 10px; margin-right: 5px; padding: 5px 10px; font-size: 0.9em; }
-        .toggle-active-btn:disabled { cursor: wait; }
-        .loading-indicator, .error-message { padding: 20px; text-align: center; background: #f9f9f9; border-radius: 8px; margin: 20px 0; }
-        .error-message { color: #f44336; border: 1px solid #f44336; }
-        .user-info { font-size: 14px; color: #666; }
-
-        /* Styles for Public URL Section */
-        .brewery-url-section h3 { margin-top: 0; }
-        .url-container { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
-        .url-container input[type="text"] { flex-grow: 1; padding: 5px; background: #fff; } /* Ensure white background */
-        .copy-btn { padding: 5px 10px; }
-        .copy-success { display: none; color: green; font-size: 0.9em; margin-top: 5px; }
-
-         /* Styles for QR Code Section */
-        #qr-code-display {
-            margin-top: 15px;
-            background: white;
-            padding: 10px;
-            border: 1px solid #ccc;
-            display: none; /* Initially hidden */
-            width: fit-content; /* Size to content */
-            border-radius: 4px;
-        }
-         #generate-qr-btn, #hide-qr-btn {
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 0.9em;
-         }
-         #hide-qr-btn {
-            display: none; /* Hide initially */
-            margin-left: 5px;
-            background-color: #6c757d; /* Grey */
-         }
-         #hide-qr-btn:hover { background-color: #5a6268; }
-
-        /* Debug Styles */
-        .debug-info { background: #f8f9fa; border: 1px solid #ddd; padding: 10px; margin: 20px 0; border-radius: 4px; font-size: 14px; color: #666; }
-        .debug-info pre { white-space: pre-wrap; margin: 0; }
-        .debug-toggle { background: #eee; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-bottom: 10px; }
-    </style>
+    <!-- Add Google Fonts if not already in styles.css -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <header>
-        <h1>Brew Metrics Dashboard</h1>
-        <div class="user-controls">
-            <span id="user-email" class="user-info">Loading user info...</span>
-            <button id="logout-btn" class="logout-btn">Log Out</button>
+<body class="dashboard-page"> <!-- Add class for page-specific body styles -->
+
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <div class="logo-container">
+                <!-- Replace with your actual logo -->
+                <img src="/assets/images/brewmetrics-logo-placeholder.svg" alt="BrewMetrics Logo" class="logo">
+                <span>BrewMetrics</span>
+            </div>
+            <div class="user-controls">
+                <span id="user-email" class="user-info">Loading...</span>
+                <!-- NOTE: app.js needs to add .btn-content span -->
+                <button id="logout-btn" class="btn btn-secondary logout-btn">
+                    <span class="btn-content">Log Out</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <div id="auth-status" class="loading-indicator">Checking authentication...</div>
-    <div id="error-message" class="error-message" style="display:none;"></div>
+    <!-- Auth Status (Initially shown, hidden by JS) -->
+    <div id="auth-status" class="loading-indicator container">Checking authentication...</div>
+    <!-- Global Error Message Area -->
+    <div id="error-message" class="error-message container" style="display:none;"></div>
 
-    <div id="dashboard-content" style="display:none;">
+    <!-- Main Dashboard Content (Initially hidden, shown by JS) -->
+    <main id="dashboard-content" class="container" style="display:none;">
 
         <!-- === Section for Public URL and QR Code === -->
-        <section id="brewery-public-url" class="brewery-url-section">
+        <section id="brewery-public-url" class="dashboard-section url-qr-section">
             <!-- Content dynamically generated by updateBreweryPublicUrl in app.js -->
-            <p>Loading your public URL...</p>
-            <!-- Placeholders for URL input, copy button, QR button, QR display -->
-            <!-- Example structure injected by JS:
-            <h3>Your Public Batch Selection URL</h3>
-            <p>Share this URL or create a QR code...</p>
-            <div class="url-container">
-                <input type="text" id="public-url-input" readonly>
-                <button id="copy-url-btn">Copy</button>
+            <!-- JS needs to ensure generated buttons have .btn-content spans -->
+            <h3>Your Public Link & QR Code</h3>
+            <p>Share this link or QR code for customers to give feedback on active batches:</p>
+            <div class="url-container form-group">
+                 <label for="public-url-input">Public Link:</label>
+                 <div class="input-group">
+                    <input type="text" id="public-url-input" value="Loading..." readonly>
+                    <button id="copy-url-btn" class="btn btn-secondary copy-btn" type="button">
+                        <span class="btn-content">Copy</span>
+                    </button>
+                 </div>
+                 <div id="copy-success" class="copy-success-msg" style="display: none;">Link copied!</div>
             </div>
-            <div id="copy-success" style="display: none;">URL copied!</div>
-            <div style="margin-top: 15px;">
-                 <button id="generate-qr-btn" disabled>Show QR Code</button>
-                 <button id="hide-qr-btn" style="display: none;">Hide QR Code</button>
+            <div class="qr-controls form-group">
+                 <label>QR Code:</label>
+                 <!-- JS needs to add .btn-content span -->
+                 <button id="generate-qr-btn" class="btn btn-primary" type="button" disabled>
+                     <span class="btn-content"><span class="icon icon-qr"></span>Show QR Code</span>
+                 </button>
+                 <!-- JS needs to add .btn-content span -->
+                 <button id="hide-qr-btn" class="btn btn-secondary" type="button" style="display: none;">
+                     <span class="btn-content">Hide QR Code</span>
+                 </button>
             </div>
-            <div id="qr-code-display" style="display: none;">
-                 <p>QR Code will appear here.</p>
+            <div id="qr-code-display" class="qr-code-display" style="display: none;">
+                <!-- QR Code will be generated here -->
             </div>
-            -->
         </section>
         <!-- === End Public URL Section === -->
 
         <!-- === Enhanced Batch Creation Form === -->
-        <section class="batch-form">
+        <section id="batch-form-section" class="dashboard-section batch-form-section">
             <h2>Create New Batch</h2>
             <form id="batch-form">
-                <div class="form-group">
-                    <label for="batch-name">Batch Name:</label>
-                    <input type="text" id="batch-name" name="batch-name" placeholder="Enter a name for this batch" required>
+                <div class="form-row"> <!-- Optional row for better layout -->
+                    <div class="form-group">
+                        <label for="batch-name">Batch Name:</label>
+                        <input type="text" id="batch-name" name="batch-name" placeholder="e.g., Hazy Does It IPA" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="batch-style">Style:</label>
+                        <input type="text" id="batch-style" name="batch-style" placeholder="e.g., NEIPA">
+                    </div>
+                </div>
+                 <div class="form-row">
+                    <div class="form-group">
+                        <label for="batch-abv">ABV (%):</label>
+                        <input type="number" id="batch-abv" name="batch-abv" placeholder="6.8" step="0.1" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="batch-ibu">IBU:</label>
+                        <input type="number" id="batch-ibu" name="batch-ibu" placeholder="55" min="0">
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="batch-style">Style:</label>
-                    <input type="text" id="batch-style" name="batch-style" placeholder="e.g., IPA, Stout, Lager">
+                    <label for="batch-description">Internal Description:</label>
+                    <textarea id="batch-description" name="batch-description" rows="2" placeholder="Notes for your eyes only..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="batch-abv">ABV (%):</label>
-                    <input type="number" id="batch-abv" name="batch-abv" placeholder="e.g., 6.5" step="0.1" min="0">
+                    <label for="batch-brewers-notes">Brewer's Notes (Public):</label>
+                    <textarea id="batch-brewers-notes" name="batch-brewers-notes" rows="3" placeholder="Tasting notes for the feedback form..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="batch-ibu">IBU: (Optional)</label>
-                    <input type="number" id="batch-ibu" name="batch-ibu" placeholder="e.g., 60" min="0">
+                    <label for="batch-incentive-text">Post-Feedback Incentive:</label>
+                    <textarea id="batch-incentive-text" name="batch-incentive-text" rows="2" placeholder="e.g., Show this screen for $1 off!"></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="batch-description">Description: (Optional - General notes for dashboard)</label>
-                    <textarea id="batch-description" name="batch-description" rows="3" placeholder="Enter any general description or internal notes about this batch..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="batch-brewers-notes">Brewer's Notes: (Optional - Shown on feedback form)</label>
-                    <textarea id="batch-brewers-notes" name="batch-brewers-notes" rows="3" placeholder="Enter any notes you want patrons to see on the feedback form..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="batch-incentive-text">Incentive Text: (Optional - Shown after feedback submitted)</label>
-                    <textarea id="batch-incentive-text" name="batch-incentive-text" rows="2" placeholder="e.g., Thanks! Show this screen for 10% off your next pint!"></textarea>
-                </div>
-                <button type="submit" id="create-batch-btn">Create Batch</button>
+                 <!-- JS needs to add .btn-content span if not already there -->
+                <button type="submit" id="create-batch-btn" class="btn btn-primary">
+                    <span class="btn-content"><span class="icon icon-brew"></span>Create Batch</span>
+                </button>
             </form>
         </section>
         <!-- === End Batch Creation Form === -->
 
         <!-- === Batch Listing Section === -->
-        <section class="batches-container">
+        <section id="batch-list-section" class="dashboard-section batch-list-section">
             <h2>Your Batches</h2>
             <div id="batches-list">
-                <p class="loading-indicator">Loading your batches...</p>
+                <p class="loading-indicator">Loading your glorious brews...</p>
+                <!-- Batch items will be dynamically inserted here by app.js -->
+                <!-- Example structure app.js needs to create inside #batches-list:
+                <article class="batch-item batch-active" data-batch-id="XYZ">
+                    <div class="batch-item-header">
+                        <h3><span class="icon batch-icon icon-beer-mug"></span> Batch Name</h3>
+                        <span class="batch-status">Active</span>
+                    </div>
+                    <div class="batch-info">
+                        <p class="batch-meta">...</p>
+                        <p class="batch-description">...</p>
+                        <p class="batch-url">...</p>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn toggle-active-btn" data-batch-id="XYZ" data-current-state="true">
+                            <span class="btn-content">Deactivate</span>
+                        </button>
+                        <button class="btn view-feedback-btn" data-batch-id="XYZ">
+                             <span class="btn-content">View Feedback</span>
+                        </button>
+                    </div>
+                    <div class="feedback-details" id="feedback-XYZ" style="display: none;">...</div>
+                </article>
+                 -->
             </div>
         </section>
         <!-- === End Batch Listing Section === -->
 
-        <!-- === Debug Section === -->
-        <button id="toggle-debug" class="debug-toggle">Show Debug Info</button>
-        <section id="debug-info" class="debug-info" style="display:none;">
-            <h3>Debug Information</h3>
-            <p>User ID: <span id="debug-user-id">Not logged in</span></p>
-            <p>Authentication Status: <span id="debug-auth-status">Checking...</span></p>
-            <p>Last Error: <pre id="debug-last-error">None</pre></p>
-        </section>
-        <!-- === End Debug Section === -->
+    </main> <!-- End #dashboard-content -->
 
-    </div> <!-- End #dashboard-content -->
+    <footer class="dashboard-footer">
+        <div class="container">
+            <p>BrewMetrics - Stop Guessing. Start Knowing.</p>
+        </div>
+    </footer>
 
     <!-- === SCRIPT LOADING AREA === -->
-
-    <!-- QR Code Library (Load BEFORE your app scripts that use it) -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-
-    <!-- Load Firebase SDK and App Logic as Modules -->
     <script type="module" src="/assets/js/firebase-config.js"></script>
+    <!-- Auth needs to load before app potentially -->
     <script type="module" src="/assets/js/auth.js"></script>
+    <!-- App logic last -->
     <script type="module" src="/assets/js/app.js"></script>
 
 </body>

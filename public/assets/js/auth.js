@@ -1,95 +1,87 @@
 // public/assets/js/auth.js
+
 import { auth } from './firebase-config.js';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+// *** ADD sendEmailVerification ***
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
 
-// Sign up function
-async function signUp(email, password) {
-    console.log("Attempting sign up..."); // Log start
-    // Clear previous errors
-    const errorElement = document.getElementById('error-message');
-    if (errorElement) {
-        errorElement.textContent = '';
-        errorElement.style.display = 'none';
-    }
+// (Keep signUp function as is - though deprecated)
+async function signUp(email, password) { /* ... */ }
 
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        console.log("Sign up successful! User:", userCredential.user.uid); // Log success
-        console.log("Attempting redirect to dashboard from signUp..."); // Log before redirect
-        window.location.replace('/brewery/dashboard.html');
-        console.log("Redirect command issued from signUp."); // Log after redirect (might not show if redirect is instant)
-        // Note: Code execution might stop here due to redirect, return might not always execute
-        return userCredential.user;
-    } catch (error) {
-        console.error("Error signing up:", error);
-        // Attempt to display error on the signup page if the element exists
-        const errorElement = document.getElementById('error-message'); // Re-get in case it wasn't found initially
-        if (errorElement) {
-            errorElement.textContent = `Signup Error: ${error.message}`; // Add context
-            errorElement.style.display = 'block'; // Ensure it's visible
-        }
-        // DO NOT re-throw the error here during this debug phase
-        // throw error;
-        return null; // Indicate failure explicitly if needed
-    }
-}
-
-// Sign in function
+// Sign in function (UPDATED WITH VERIFICATION CHECK)
 async function signIn(email, password) {
-    console.log("Attempting sign in..."); // Log start
-     // Clear previous errors
+    console.log("Attempting sign in via auth.js...");
     const errorElement = document.getElementById('error-message');
-    if (errorElement) {
-        errorElement.textContent = '';
-        errorElement.style.display = 'none';
-    }
+    const resendButton = document.getElementById('resend-verification-btn'); // Add a resend button to login.html if desired
+
+    // Hide previous messages/buttons
+    if (errorElement) errorElement.style.display = 'none';
+    if (resendButton) resendButton.style.display = 'none';
+
 
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        console.log("Sign in successful! User:", userCredential.user.uid); // Log success
-        console.log("Attempting redirect to dashboard from signIn..."); // Log before redirect
+        const user = userCredential.user;
+        console.log("Sign in successful (pre-verification check)! User:", user.uid);
+
+        // *** CHECK EMAIL VERIFICATION ***
+        if (!user.emailVerified) {
+            console.warn(`User ${user.uid} email NOT verified.`);
+            if (errorElement) {
+                errorElement.textContent = "Your email address is not verified. Please check your inbox (and spam folder) for the verification link.";
+                errorElement.style.display = 'block';
+            }
+            // Optionally show a "Resend" button
+            if (resendButton) {
+                resendButton.style.display = 'inline-block'; // Or 'block'
+                // Remove previous listener if any
+                resendButton.replaceWith(resendButton.cloneNode(true)); // Simple way to remove listeners
+                const newResendButton = document.getElementById('resend-verification-btn'); // Get the new clone
+                if (newResendButton) {
+                    newResendButton.onclick = async () => { // Use onclick for simplicity here, or addEventListener
+                         try {
+                             await sendEmailVerification(user);
+                             if (errorElement) {
+                                 errorElement.textContent = "Verification email resent. Please check your inbox.";
+                                 errorElement.style.display = 'block';
+                             }
+                             newResendButton.style.display = 'none'; // Hide after sending
+                         } catch (resendError) {
+                             console.error("Error resending verification email:", resendError);
+                             if (errorElement) {
+                                 errorElement.textContent = `Error resending email: ${resendError.message}`;
+                                 errorElement.style.display = 'block';
+                             }
+                         }
+                    };
+                }
+            }
+            // IMPORTANT: DO NOT REDIRECT
+            return null; // Indicate login didn't fully succeed for access purposes
+        }
+
+        // If verified, proceed to redirect
+        console.log(`User ${user.uid} email IS verified. Redirecting to dashboard...`);
         window.location.replace('/brewery/dashboard.html');
-        console.log("Redirect command issued from signIn."); // Log after redirect (might not show)
-        // Note: Code execution might stop here due to redirect, return might not always execute
-        return userCredential.user;
+        return user; // Return the verified user
+
     } catch (error) {
         console.error("Error signing in:", error);
-         // Attempt to display error on the login page if the element exists
-         const errorElement = document.getElementById('error-message'); // Re-get
          if (errorElement) {
-             errorElement.textContent = `Signin Error: ${error.message}`; // Add context
-             errorElement.style.display = 'block'; // Ensure it's visible
+             // Provide more specific common errors
+             if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                 errorElement.textContent = "Invalid email or password.";
+             } else {
+                errorElement.textContent = `Signin Error: ${error.message}`;
+             }
+             errorElement.style.display = 'block';
          }
-        // DO NOT re-throw error during this debug phase
-        // throw error;
-        return null; // Indicate failure explicitly if needed
+        return null;
     }
 }
 
-// Sign out function
-async function logOut() {
-    try {
-        await signOut(auth);
-        console.log("User signed out");
-        // Use replace for redirection
-        window.location.replace('/login.html');
-    } catch (error) {
-        console.error("Error signing out:", error);
-        // Decide if you need to show an error message on logout failure
-        throw error; // Re-throw might be appropriate here
-    }
-}
+// (LOGOUT FUNCTION REMAINS REMOVED)
 
-// ==============================================================
-// REMOVED: Duplicate onAuthStateChanged Listener
-// This logic is handled more appropriately in app.js
-// ==============================================================
-
-// Attach to window for HTML access (if called via inline onclick, etc.)
-// Consider refactoring HTML to use module imports and event listeners instead
-window.signUp = signUp;
 window.signIn = signIn;
-window.logOut = logOut;
+window.signUp = signUp; // Keep for now
 
-// Export functions for potential module usage
-export { signUp, signIn, logOut };
+export { signUp, signIn };

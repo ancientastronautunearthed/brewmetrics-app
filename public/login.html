@@ -4,37 +4,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brew Metrics - Login</title>
+    <title>BrewMetrics - Login</title>
     <link rel="stylesheet" href="/assets/css/styles.css">
+    <!-- Link Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Use styles from styles.css -->
 </head>
-<body>
-    <div class="container">
-        <h1>Brew Metrics</h1>
-        
+<!-- Add class for auth page styling -->
+<body class="auth-page">
+    <!-- Wrapper for centering/max-width control -->
+    <div class="container auth-container">
+
         <div class="form-container">
-            <h2>Login / Sign Up</h2>
-            <div id="error-message" class="error"></div>
-            
-            <form id="auth-form">
+             <!-- Optional Logo -->
+             <!-- <img src="/assets/images/brewmetrics-logo-placeholder.svg" alt="BrewMetrics Logo" style="max-width: 70px; margin: 0 auto 1rem auto;"> -->
+            <h1>BrewMetrics</h1>
+            <h2>Brewer Login</h2>
+            <div id="error-message" class="error-message" style="display: none;"></div>
+
+            <!-- Added onsubmit="return false;" to prevent default HTML form submission -->
+            <form id="auth-form" onsubmit="return false;">
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" required>
+                    <input type="email" id="email" required autocomplete="email">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" required>
+                    <input type="password" id="password" required autocomplete="current-password">
                 </div>
-                
+
                 <div class="button-group">
-                    <button type="button" onclick="signIn(document.getElementById('email').value, document.getElementById('password').value)">Login</button>
-                    <button type="button" onclick="signUp(document.getElementById('email').value, document.getElementById('password').value)">Sign Up</button>
+                     <!-- Login Button - Calls signIn from auth.js -->
+                    <button type="button" class="btn btn-primary" onclick="signIn(document.getElementById('email').value, document.getElementById('password').value)">
+                        <span class="btn-content">Login</span>
+                    </button>
+
+                    <!-- Sign Up Button - Navigates to new page -->
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/auth/signup-brewery.html'">
+                        <span class="btn-content">New Brewery? Sign Up Here</span>
+                    </button>
+                     <!-- END MODIFICATION -->
                 </div>
             </form>
         </div>
     </div>
-    
+
+    <!-- Scripts -->
     <script type="module" src="/assets/js/firebase-config.js"></script>
+    <!-- auth.js IS still needed for the signIn function -->
     <script type="module" src="/assets/js/auth.js"></script>
 </body>
 </html>

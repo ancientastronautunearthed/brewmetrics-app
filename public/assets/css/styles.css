@@ -1,187 +1,544 @@
-@import url('https://fonts.googleapis.com/css2?family=Bitter&family=Montserrat&display=swap');
+/* public/assets/css/styles.css */
 
+/* --- Variables --- */
 :root {
-    --amber: #FFC107;  /* Primary action color */
-    --stout: #1C1C1C;  /* Text and headings */
-    --foam: #F5F5F5;   /* Backgrounds */
-    --copper: #B87333; /* Accents and borders */
+    --amber: #FFBF00;
+    --stout: #2C1B18;
+    --foam: #F5F5F5;
+    --copper: #B87333;
+    --stout-light: #4a3a36; /* Lighter stout for secondary text */
+    --amber-darker: #e6ac00; /* For hover */
+    --copper-darker: #a06429; /* For hover */
+    --white: #FFFFFF;
+    --grey-light: #e0e0e0;
+    --grey-dark: #555555;
+    --error-red: #c0392b;
+
+    --font-heading: 'Bitter', serif;
+    --font-body: 'Montserrat', sans-serif;
+
+    --radius-small: 4px;
+    --radius-medium: 8px;
+    --shadow-light: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-* {
+/* --- Base & Reset --- */
+*, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+html {
+    font-size: 16px; /* Base font size */
+}
+
 body {
-    font-family: 'Montserrat', sans-serif;
-    line-height: 1.6;
+    font-family: var(--font-body);
     color: var(--stout);
-    background-color: var(--foam);
+    background-color: var(--foam); /* Base background */
+    line-height: 1.6;
+    /* Optional wood texture background */
+    /* background-image: url('../images/light-wood-texture.png'); */
+    /* background-repeat: repeat; */
 }
 
+.dashboard-page {
+     /* Specific background for dashboard if needed */
+     background-color: #eae6e1; /* Slightly textured off-white */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    color: var(--copper);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--copper-darker);
+    text-decoration: underline;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--stout);
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+}
+
+h1 { font-size: 2.5rem; font-weight: 700; }
+h2 { font-size: 1.8rem; font-weight: 700; }
+h3 { font-size: 1.4rem; font-weight: 700; }
+h4 { font-size: 1.1rem; font-weight: 700; }
+
+p {
+    margin-bottom: 1rem;
+}
+
+/* --- Layout --- */
 .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
-header {
+/* --- Header --- */
+.dashboard-header {
+    background-color: var(--stout);
+    color: var(--foam);
+    padding: 0.8rem 0;
+    box-shadow: var(--shadow-medium);
+    margin-bottom: 2rem; /* Add space below header */
+}
+
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
 }
 
-h1, h2, h3 {
-    font-family: 'Bitter', serif;
-    color: var(--stout);
-    margin-bottom: 20px;
-}
-
-h1 {
-    font-size: 2.5rem;
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-heading);
     font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--amber); /* Logo text in Amber */
 }
 
-h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
+.logo {
+    height: 40px; /* Adjust as needed */
+    width: auto;
 }
 
-.form-container {
-    background: var(--foam);
-    padding: 20px;
+.user-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-info {
+    font-size: 0.9rem;
+    color: var(--grey-light);
+}
+
+/* --- Sections --- */
+.dashboard-section {
+    background-color: var(--foam);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    border-radius: var(--radius-medium);
     border: 2px solid var(--copper);
-    border-radius: 5px;
+    box-shadow: var(--shadow-light);
 }
 
-.form-group {
-    margin-bottom: 15px;
+.url-qr-section h3,
+.batch-form-section h2,
+.batch-list-section h2 {
+    border-bottom: 2px solid var(--grey-light);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--stout-light);
 }
+
+/* --- Forms --- */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive columns */
+    gap: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+/* Adjust if only one item in row */
+.form-row > .form-group {
+    margin-bottom: 0;
+}
+
 
 label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-weight: 600; /* Bolder labels */
+    font-size: 0.95rem;
+    color: var(--stout-light);
 }
 
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+input[type="number"],
+textarea {
     width: 100%;
-    padding: 10px;
+    padding: 0.75rem 1rem;
     border: 2px solid var(--copper);
-    border-radius: 5px;
-    background-color: var(--foam);
-}
-
-button {
-    padding: 10px 15px;
-    background-color: var(--amber);
-    border: none;
+    border-radius: var(--radius-small);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    background-color: var(--white);
     color: var(--stout);
-    cursor: pointer;
-    border-radius: 5px;
-    font-family: 'Montserrat', sans-serif;
-    transition: background-color 0.2s ease, transform 0.1s linear;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-button:hover {
-    background-color: #e6ac00; /* Darker Amber */
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--amber);
+    box-shadow: 0 0 0 3px rgba(255, 191, 0, 0.3); /* Amber focus ring */
 }
 
-button:active {
-    transform: scale(0.95); /* Retro-style click effect */
+textarea {
+    resize: vertical;
+    min-height: 60px;
 }
 
-.button-group {
+/* Input group for copy URL */
+.input-group {
     display: flex;
-    gap: 10px;
+}
+.input-group input[type="text"] {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: none;
+}
+.input-group button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
-.error {
-    color: red;
-    margin-bottom: 15px;
+
+/* --- Buttons --- */
+.btn {
+    display: inline-flex; /* Align icon and text */
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem; /* Space between icon and text */
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius-small);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    position: relative; /* Needed for beer fill */
+    overflow: hidden; /* Hide overflow from fill */
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    z-index: 1; /* Keep button base below content */
 }
 
-.create-batch, .batches {
-    background: var(--foam);
-    padding: 20px;
-    border: 2px solid var(--copper);
-    border-radius: 5px;
-    margin-bottom: 20px;
+/* Span inside button to hold content above the fill */
+.btn-content {
+    position: relative;
+    z-index: 2; /* Ensure text is above the fill */
+    display: inline-flex; /* To align icon */
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Beer Fill Effect */
+.btn::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0; /* Start at 0 height */
+    background-color: var(--amber); /* Fill color */
+    transition: height 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); /* Beer-like fill curve */
+    z-index: 1; /* Behind the text content */
+    border-top-left-radius: 50% 20px; /* Foam shape */
+    border-top-right-radius: 50% 20px; /* Foam shape */
+    opacity: 0.9;
+}
+
+.btn:hover::before,
+.btn:focus::before {
+    height: 100%; /* Fill up on hover/focus */
+}
+
+/* Primary Button */
+.btn-primary {
+    background-color: var(--copper); /* Base color - copper */
+    color: var(--foam);
+}
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--copper); /* Keep base color */
+    color: var(--stout); /* Text changes color as beer fills */
+}
+.btn-primary::before {
+    background-color: var(--amber); /* Amber fill */
+}
+
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: var(--stout-light);
+    color: var(--foam);
+}
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background-color: var(--stout-light); /* Keep base color */
+    color: var(--stout); /* Text changes color */
+}
+.btn-secondary::before {
+    background-color: var(--grey-light); /* Lighter fill */
+}
+
+/* Logout Button Specific */
+.logout-btn {
+    background-color: var(--error-red);
+     color: var(--white);
+}
+.logout-btn::before {
+     background-color: #e74c3c; /* Slightly different red fill */
+}
+.logout-btn:hover,
+.logout-btn:focus {
+    background-color: var(--error-red); /* Keep base color */
+    color: var(--white); /* Keep text white for logout */
+}
+
+
+.btn:active {
+    transform: scale(0.97); /* Slight press effect */
+}
+
+.btn:disabled {
+    background-color: var(--grey-light);
+    color: var(--grey-dark);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+.btn:disabled::before {
+    height: 0 !important; /* No fill on disabled */
+}
+
+
+/* --- Batch List --- */
+.batch-list-section h2 {
+    /* Custom styling if needed */
+}
+
+#batches-list {
+    display: grid;
+    gap: 1.5rem;
+    /* Responsive columns for batches */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 .batch-item {
-    border-bottom: 2px solid var(--copper);
-    padding: 15px 0;
+    background-color: var(--white);
+    border-radius: var(--radius-medium);
+    border: 1px solid var(--grey-light);
+    box-shadow: var(--shadow-light);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 
-.batch-item:last-child {
-    border-bottom: none;
+.batch-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-medium);
 }
 
-.batch-item h3 {
-    margin-bottom: 10px;
-}
-
-.feedback-container {
-    background: var(--foam);
-    padding: 20px;
-    border: 2px solid var(--copper);
-    border-radius: 5px;
-    margin-top: 20px;
-}
-
-.slider-anchor-labels {
+.batch-item-header {
     display: flex;
     justify-content: space-between;
-    margin-top: 4px;
-    padding: 0 5px;
-    box-sizing: border-box;
-    width: 100%;
+    align-items: center;
+    border-bottom: 1px dashed var(--grey-light);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+}
+.batch-item-header h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.slider-anchor-labels span {
-    font-size: 0.75em;
-    color: var(--stout);
+/* Batch Icon Styling & Tilt */
+.batch-icon {
+    display: inline-block;
+    width: 24px; /* Adjust size */
+    height: 24px;
+    background-color: var(--copper); /* Placeholder color */
+    border-radius: 4px;
+    /* Add mask/background-image for actual icon later */
+     mask-image: url('/assets/images/beer-mug-icon.svg'); /* EXAMPLE */
+     mask-size: contain;
+     mask-repeat: no-repeat;
+    transition: transform 0.25s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Bouncy tilt */
+}
+.batch-item:hover .batch-icon {
+    transform: rotate(-18deg) translateY(2px); /* Tilt on hover */
+}
+
+.batch-status {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-small);
+    text-transform: uppercase;
+}
+.batch-active .batch-status {
+    background-color: rgba(39, 174, 96, 0.1); /* Light green */
+    color: #27ae60; /* Green */
+}
+.batch-inactive .batch-status {
+    background-color: rgba(108, 122, 137, 0.1); /* Light grey */
+    color: #6c7a89; /* Grey */
+}
+
+
+.batch-info {
+    flex-grow: 1; /* Takes up available space */
+    margin-bottom: 1rem;
+}
+.batch-meta {
+    font-size: 0.85rem;
+    color: var(--grey-dark);
+    margin-bottom: 0.5rem;
+}
+.batch-description {
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+}
+.batch-url label {
+     font-size: 0.9em;
+     font-weight: 600;
+     margin-bottom: 3px;
+}
+.batch-url .input-group { margin-top: 3px;} /* Space between label and input */
+
+
+.button-group {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+    margin-top: auto; /* Push to bottom if using flex column */
+}
+.button-group .btn {
+    padding: 0.5rem 1rem; /* Smaller buttons in list */
+    font-size: 0.9rem;
+}
+
+.feedback-details {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #fdfcfb; /* Slightly different foam */
+    border: 1px dashed var(--grey-light);
+    border-radius: var(--radius-small);
+    font-size: 0.9rem;
+    /* display: none; by default from JS */
+}
+.feedback-details h4 { font-size: 1rem; margin-bottom: 0.5rem; }
+.feedback-details h5 { font-size: 0.95rem; margin-top: 0.8rem; margin-bottom: 0.3rem; }
+.feedback-details ul { list-style: none; padding-left: 0; }
+.feedback-details li { margin-bottom: 0.3rem; }
+
+
+/* --- URL/QR Section --- */
+.url-qr-section .url-container {
+    /* Styles already covered by input-group */
+}
+.copy-success-msg { color: #27ae60; font-weight: 600; }
+.qr-controls { margin-top: 1rem; }
+.qr-code-display {
+    border: 1px solid var(--grey-light);
+    background-color: var(--white);
+    padding: 10px;
+    border-radius: var(--radius-small);
+    width: fit-content;
+    margin-top: 0.75rem;
+    box-shadow: var(--shadow-light);
+}
+
+/* --- Footer --- */
+.dashboard-footer {
+    margin-top: 3rem;
     text-align: center;
-    flex-basis: 30%;
-    white-space: normal;
-    line-height: 1.2;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--grey-light);
+    font-size: 0.9rem;
+    color: var(--grey-dark);
 }
 
-.descriptor-block {
-    margin-bottom: 15px;
-}
+/* --- Utility --- */
+.loading-indicator { text-align: center; padding: 2rem; font-style: italic; color: var(--grey-dark); }
+.error-message { background-color: rgba(192, 57, 43, 0.1); border: 1px solid var(--error-red); color: var(--error-red); padding: 1rem; border-radius: var(--radius-small); }
 
-.descriptor-block input[type="range"] {
-    width: 100%;
-    margin-top: 5px;
-    -webkit-appearance: none;
-    height: 10px;
-    background: var(--copper);
-    border-radius: 5px;
-}
 
-.descriptor-block input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    background: var(--amber);
-    border-radius: 50%;
-    cursor: pointer;
-}
-
+/* --- Responsiveness --- */
 @media (max-width: 768px) {
-    .container {
-        padding: 10px;
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.6rem; }
+    h3 { font-size: 1.3rem; }
+
+    .dashboard-header .container {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: flex-start;
     }
-    h1 {
-        font-size: 2rem;
+
+    .dashboard-section {
+        padding: 1rem 1.25rem;
     }
-    h2 {
-        font-size: 1.5rem;
+
+    .form-row {
+        grid-template-columns: 1fr; /* Stack columns */
+        gap: 1rem; /* Reduce gap */
+        margin-bottom: 1rem;
     }
+
+    #batches-list {
+        grid-template-columns: 1fr; /* Single column */
+        gap: 1rem;
+    }
+
+    .button-group {
+        justify-content: center; /* Center buttons when wrapped */
+    }
+
+     .input-group {
+        flex-direction: column; /* Stack input and button */
+        gap: 0.5rem;
+     }
+     .input-group input[type="text"] {
+        border-radius: var(--radius-small); /* Reset radius */
+        border-right: 2px solid var(--copper); /* Add border back */
+     }
+     .input-group button {
+        border-radius: var(--radius-small); /* Reset radius */
+     }
+
+}
+
+@media (max-width: 480px) {
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.95rem;
+        width: 100%; /* Make buttons full width */
+    }
+    .button-group .btn {
+         width: auto; /* Allow list buttons to size normally */
+    }
+    .dashboard-header .logo-container {
+        font-size: 1.3rem;
+    }
+    .logo { height: 35px; }
+
 }
