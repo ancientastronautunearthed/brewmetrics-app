@@ -220,7 +220,25 @@ if (signupForm) {
             await setDoc(breweryDocRef, breweryProfileData);
             console.log("Firestore profile created successfully!");
 
-            // --- Step 5: Send Verification Email ---
+            // --- *** ADDED Step 4.5: Create User Profile Document *** ---
+             const userDocRef = doc(db, "users", userId);
+            // Data for the user document - crucially includes breweryId
+            const userProfileData = {
+            // Link to the brewery document (whose ID is the same as the user's UID)
+            breweryId: userId,
+            // Satisfy the security rule requirement
+             ownerId: userId,
+            // Optional: Add user's email or creation timestamp if useful
+            email: email,
+            createdAt: serverTimestamp()
+            };
+            console.log(`Attempting to set Firestore document at: users/${userId}`);
+            await setDoc(userDocRef, userProfileData);
+            console.log("Firestore user profile created successfully with breweryId link!");
+            // --- *** END ADDED Step 4.5 *** ---
+
+
+            // --- Step 5: Send Verification Email ---I. I. 
             console.log("Attempting to send verification email...");
             await sendEmailVerification(userCredentialForVerification.user);
             console.log("Verification email sent successfully.");

@@ -1,38 +1,51 @@
-// WARNING: CONTAINS TEMPORARY INSECURE RULE FOR EMULATOR TESTING ONLY
-// MUST BE REVERTED AND REPLACED WITH SECURE CLOUD FUNCTION APPROACH BEFORE DEPLOYMENT
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Rule for brewery-specific data (e.g., user profiles - assuming this exists)
-    // Keep this rule as it was - secure for brewer's own data
-    match /breweries/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    // Allow logged-in users to read their OWN user document
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Allow user creation ONLY if document ID matches user's UID
+      // AND the data being written includes the correct ownerId
+      allow create: if request.auth != null
+                       && request.auth.uid == userId // Doc ID must match user
+                       && request.resource.data.ownerId == request.auth.uid; // Ensure ownerId is set correctly
+      // Add allow update later if users can update their user doc
+      // allow update: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Rule for batches
-    // Keep these rules as they were
+    // Rules for 'breweries' collection
+    match /breweries/{breweryId} {
+      // Allow any authenticated user to read brewery info? (Keep for now)
+      allow read: if request.auth != null;
+
+      // *** ADD THIS RULE ***
+      // Allow a user to CREATE a brewery document IF:
+      // 1. They are authenticated (request.auth != null)
+      // 2. The brewery document ID being created ({breweryId}) matches THEIR UID (request.auth.uid)
+      // 3. The data being written includes an 'ownerId' field that ALSO matches their UID.
+      allow create: if request.auth != null
+                       && request.auth.uid == breweryId // User can only create brewery doc with their own UID as ID
+                       && request.resource.data.ownerId == request.auth.uid; // ownerId field must match
+
+      // Allow update only by the owner (adjust based on your needs)
+      // allow update: if request.auth != null && resource.data.ownerId == request.auth.uid;
+    }
+
+    // Rules for 'batches' collection (Adjust as needed)
     match /batches/{batchId} {
-      allow read: if true; // Anyone can read batch details
-      allow create: if request.auth != null && request.resource.data.breweryId == request.auth.uid; // Brewer can create
-      allow update, delete: if request.auth != null && resource.data.breweryId == request.auth.uid; // Brewer can update/delete OWN batches (using existing resource data)
+      allow read: if request.auth != null;
+      // Check breweryId in user doc before allowing write/update/delete
+      allow create: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.breweryId == request.resource.data.breweryId;
+      allow update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.breweryId == resource.data.breweryId;
     }
 
-    // Rule for feedback
+     // Rules for 'feedback' collection (Adjust as needed)
     match /feedback/{feedbackId} {
-      allow create: if true; // Anyone can submit feedback
-
-      // --- THIS IS THE MODIFIED LINE ---
-      // TEMPORARY INSECURE RULE FOR EMULATOR TESTING: Allows any read operation.
-      allow read: if true;
-      // --- END OF MODIFIED LINE ---
-
-      // Prevent updates or deletes by client-side code
-      allow update, delete: if false;
+        allow create: if true; // Allow anyone to submit feedback
+        // Allow read only by user linked to the brewery (owner)
+        allow read: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.breweryId == resource.data.breweryId;
+        allow update, delete: if false; // Disallow client modification
     }
-
-    // Add any other collection rules here...
-
   }
 }

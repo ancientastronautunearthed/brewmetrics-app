@@ -326,12 +326,6 @@ textarea {
     height: 0 !important; /* No fill on disabled */
 }
 
-
-/* --- Batch List --- */
-.batch-list-section h2 {
-    /* Custom styling if needed */
-}
-
 #batches-list {
     display: grid;
     gap: 1.5rem;
@@ -541,4 +535,39 @@ textarea {
     }
     .logo { height: 35px; }
 
+}
+
+/* Tooltip Trigger Style */
+.metric-tooltip-trigger {
+    display: inline-block; /* Make it sit nicely next to text */
+    margin-left: 5px;
+    font-weight: bold;
+    cursor: help; /* Indicate it provides help */
+    color: var(--color-secondary); /* Use a theme color */
+    border: 1px solid var(--color-secondary-light);
+    border-radius: 50%;
+    width: 18px; /* Small circle */
+    height: 18px;
+    line-height: 16px; /* Vertically center '?' */
+    text-align: center;
+    font-size: 0.8em;
+    background-color: var(--color-background-alt); /* Light background */
+}
+/* Add hover effect if desired */
+.metric-tooltip-trigger:hover {
+     background-color: var(--color-secondary-light);
+     color: var(--color-text-primary);
+}
+
+/* Style adjustments for rating scale with jargon */
+.feedback-page .rating-scale .rating-label-text {
+    font-size: 0.8em; /* Slightly larger to fit jargon */
+    color: #555;
+    margin-top: 4px;
+    min-height: 2.5em; /* Ensure space for two lines if needed */
+    line-height: 1.2em;
+}
+.feedback-page .rating-scale input[type="radio"]:checked + .rating-value + .rating-label-text {
+    color: var(--color-text-primary); /* Make selected label darker */
+    font-weight: 600;
 }

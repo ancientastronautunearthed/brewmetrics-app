@@ -7,11 +7,11 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, se
 // (Keep signUp function as is - though deprecated)
 async function signUp(email, password) { /* ... */ }
 
-// Sign in function (UPDATED WITH VERIFICATION CHECK)
+// Sign in function (UPDATED TO BYPASS VERIFICATION CHECK)
 async function signIn(email, password) {
     console.log("Attempting sign in via auth.js...");
     const errorElement = document.getElementById('error-message');
-    const resendButton = document.getElementById('resend-verification-btn'); // Add a resend button to login.html if desired
+    const resendButton = document.getElementById('resend-verification-btn'); // Keep reference JIC
 
     // Hide previous messages/buttons
     if (errorElement) errorElement.style.display = 'none';
@@ -23,9 +23,13 @@ async function signIn(email, password) {
         const user = userCredential.user;
         console.log("Sign in successful (pre-verification check)! User:", user.uid);
 
-        // *** CHECK EMAIL VERIFICATION ***
+        // *** BYPASS EMAIL VERIFICATION CHECK ***
+        // The check for user.emailVerified is now removed/commented out.
+
+        /*
+        // --- START: Original Email Verification Block (Now Bypassed) ---
         if (!user.emailVerified) {
-            console.warn(`User ${user.uid} email NOT verified.`);
+            console.warn(`User ${user.uid} email NOT verified. (Check bypassed in auth.js)`);
             if (errorElement) {
                 errorElement.textContent = "Your email address is not verified. Please check your inbox (and spam folder) for the verification link.";
                 errorElement.style.display = 'block';
@@ -33,36 +37,22 @@ async function signIn(email, password) {
             // Optionally show a "Resend" button
             if (resendButton) {
                 resendButton.style.display = 'inline-block'; // Or 'block'
-                // Remove previous listener if any
-                resendButton.replaceWith(resendButton.cloneNode(true)); // Simple way to remove listeners
-                const newResendButton = document.getElementById('resend-verification-btn'); // Get the new clone
+                resendButton.replaceWith(resendButton.cloneNode(true));
+                const newResendButton = document.getElementById('resend-verification-btn');
                 if (newResendButton) {
-                    newResendButton.onclick = async () => { // Use onclick for simplicity here, or addEventListener
-                         try {
-                             await sendEmailVerification(user);
-                             if (errorElement) {
-                                 errorElement.textContent = "Verification email resent. Please check your inbox.";
-                                 errorElement.style.display = 'block';
-                             }
-                             newResendButton.style.display = 'none'; // Hide after sending
-                         } catch (resendError) {
-                             console.error("Error resending verification email:", resendError);
-                             if (errorElement) {
-                                 errorElement.textContent = `Error resending email: ${resendError.message}`;
-                                 errorElement.style.display = 'block';
-                             }
-                         }
-                    };
+                    newResendButton.onclick = async () => { // Resend logic // };
                 }
             }
             // IMPORTANT: DO NOT REDIRECT
             return null; // Indicate login didn't fully succeed for access purposes
         }
+        // --- END: Original Email Verification Block ---
+        */
 
-        // If verified, proceed to redirect
-        console.log(`User ${user.uid} email IS verified. Redirecting to dashboard...`);
+        // If authentication is successful, proceed to redirect regardless of verification status
+        console.log(`User ${user.uid} authenticated. Redirecting to dashboard (verification bypassed)...`);
         window.location.replace('/brewery/dashboard.html');
-        return user; // Return the verified user
+        return user; // Return the user object
 
     } catch (error) {
         console.error("Error signing in:", error);
@@ -75,13 +65,16 @@ async function signIn(email, password) {
              }
              errorElement.style.display = 'block';
          }
-        return null;
+        return null; // Return null on authentication failure
     }
 }
 
 // (LOGOUT FUNCTION REMAINS REMOVED)
 
+// Ensure functions are available globally if called directly from HTML onclick (legacy pattern)
+// It's better practice to add event listeners in JS, but this maintains compatibility if needed.
 window.signIn = signIn;
-window.signUp = signUp; // Keep for now
+window.signUp = signUp; // Keep for now if used
 
+// Export for potential module usage elsewhere (though maybe not needed if only used by HTML)
 export { signUp, signIn };
